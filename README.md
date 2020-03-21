@@ -1,2 +1,4 @@
 # terraform-k8s-example
-Example of deploying kubernetes resources using Terraform
+Examples of deploying kubernetes resources using Terraform
+
+* [Deploy echoserver on minikube](minikube-echoserver)
