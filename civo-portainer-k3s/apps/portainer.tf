@@ -1,5 +1,12 @@
+variable "portainer_http_port" {
+  default = 9000
+}
+
 locals {
   name = "portainer"
+  labels = {
+    app = "app-${local.name}"
+  }
 }
 
 resource "kubernetes_namespace" "portainer" {
@@ -32,31 +39,6 @@ resource "kubernetes_cluster_role_binding" "portainer" {
   }
 }
 
-resource "kubernetes_service" "portainer" {
-  metadata {
-    name = local.name
-    namespace = kubernetes_namespace.portainer.metadata[0].name
-  }
-  spec {
-    type = "LoadBalancer"
-    selector = {
-      app = "app-${local.name}"
-    }
-    port {
-      name = "http"
-      protocol = "TCP"
-      port = 9000
-      target_port = 9000
-    }
-    port {
-      name = "edge"
-      protocol = "TCP"
-      port = 8000
-      target_port = 8000
-    }
-  }
-}
-
 resource "kubernetes_deployment" "portainer" {
   metadata {
     name = local.name
@@ -64,11 +46,11 @@ resource "kubernetes_deployment" "portainer" {
   }
   spec {
     selector {
-      match_labels = kubernetes_service.portainer.spec[0].selector
+      match_labels = local.labels
     }
     template {
       metadata {
-        labels = kubernetes_service.portainer.spec[0].selector
+        labels = local.labels
       }
       spec {
         service_account_name = kubernetes_service_account.portainer.metadata[0].name
@@ -100,4 +82,31 @@ resource "kubernetes_deployment" "portainer" {
       }
     }
   }
+}
+
+resource "kubernetes_service" "portainer" {
+  metadata {
+    name = local.name
+    namespace = kubernetes_namespace.portainer.metadata[0].name
+  }
+  spec {
+    type = "LoadBalancer"
+    selector = kubernetes_deployment.portainer.spec[0].selector[0].match_labels
+    port {
+      name = "http"
+      protocol = kubernetes_deployment.portainer.spec[0].template[0].spec[0].container[0].port[1].protocol
+      port = var.portainer_http_port
+      target_port = kubernetes_deployment.portainer.spec[0].template[0].spec[0].container[0].port[1].container_port
+    }
+    port {
+      name = "edge"
+      protocol = kubernetes_deployment.portainer.spec[0].template[0].spec[0].container[0].port[0].protocol
+      port = kubernetes_deployment.portainer.spec[0].template[0].spec[0].container[0].port[0].container_port
+      target_port = kubernetes_deployment.portainer.spec[0].template[0].spec[0].container[0].port[0].container_port
+    }
+  }
+}
+
+output "portainer_url" {
+  value = "http://${var.cluster_dns}:${var.portainer_http_port}"
 }
