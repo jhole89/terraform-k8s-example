@@ -1,0 +1,1 @@
+variable "auth_token" {}
