@@ -21,21 +21,21 @@ Steps:
     ...
     Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
     ```
-6. Log into your Civo account and grab the dns name:
+7. Log into your Civo account and grab the dns name:
 
-[Civo DNS](docs/civo_dns.png)
-*Cluster details and DNS name*
+   ![Civo DNS](docs/civo_dns.png)
 
-Portainer will be published on port 9000:
-[Portainer start screen](docs/portainer_admin.png)
+   Portainer will be published on port 9000:
+   ![Portainer start screen](docs/portainer_admin.png)
 
-Create the admin user and connect to the civo kubernetes cluster:
-[Connect portainer to k8s](docs/portainer_connect.png)
+   Create the admin user and connect to the civo kubernetes cluster:
+   ![Connect portainer to k8s](docs/portainer_connect.png)
 
-You can now use portainer to deploy kubernetes applications into civo-k3s:
-[Deploy Nginx](docs/portainer_nginx_create.png)
-[](docs/portainer_nginx_create2.png)
+   You can now use portainer to deploy kubernetes applications into civo-k3s:
+   ![Deploy Nginx](docs/portainer_nginx_create.png)
 
-[Access Nginx](docs/nginx_welcome.png)
+   ![](docs/portainer_nginx_create2.png)
 
-7. Once no longer required you can remove all resources: `terraform destroy --auto-approve`
+   ![Access Nginx](docs/nginx_welcome.png)
+
+8. Once no longer required you can remove all resources: `terraform destroy --auto-approve`
