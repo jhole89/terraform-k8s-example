@@ -1,3 +1,3 @@
-output "portainer_url" {
-  value = module.apps.portainer_url
+output "url" {
+  value = module.cluster.cluster_dns
 }
